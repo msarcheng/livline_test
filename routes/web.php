@@ -7,4 +7,8 @@ Route::get('/', function () {
     return "Livline Coding Test";
 });
 
+Route::fallback(function () {
+    return "This is coding test.";
+});
+
 require __DIR__.'/auth.php';
