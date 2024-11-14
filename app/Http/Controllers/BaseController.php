@@ -15,7 +15,7 @@ class BaseController extends Controller
      *
      * @return JsonResponse
      */
-    public function sendResponse(array $result, int $http_status = 200): JsonResponse
+    public function sendResponse(int $http_status = 200, array $result = []): JsonResponse
     {
         $response = [
             'status_code' => $http_status,

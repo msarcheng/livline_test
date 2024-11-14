@@ -7,60 +7,84 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## About Laravel
-
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
-
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## About Project
+This project uses latest Laravel as pure API only. <br/>
+This is laravel based test coding for livline.
 
 ## Laravel Sponsors
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+LIVLINE
 
-### Premium Partners
+## HowTo
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+- Assuming it is pulled or saved locally...
+- `composer install` && `php artisan migrate --seed`
+- `php artisan key:generate` if key is not generated on `.env`
 
-## Contributing
+## Structure
+```
+ Controller (Injects Interface)
+     |
+ Interface ---------> Service (implements Interface)
+                         |
+                         |
+                       Model (Hard injected to Service)
+```
+- Our `TaskController` injects on `__construct(TaskInterface $interface)`
+- Then we implement `TaskInterface` to `TaskService`
+- From `TaskService` we then inject `Task` model.
+- (Optional) we could add `TaskRepository` to add abstraction to our model.
+- To make this work, we create a provider `TaskServiceProvider` where we 
+  bind together `TaskInterface` and `TaskService`.
+- Then we add the `TaskServiceProvider` to either or both `app.php` and `providers.php`
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
-## Code of Conduct
+## VHost for Local Dev
+- If you are running Ubuntu you could modify a local domain e.g. (`livline.local`)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- Make a copy of existing sample of `.conf` file for vhost <br />
+  `sudo cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/livline.conf`
 
-## Security Vulnerabilities
+- Then modify `sudo vi /etc/apache2/sites-available/livline.conf`
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- Add the following:
+```
+<VirtualHost *:80>
 
-## License
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/liv_line_folder/public
+        ServerName livline.local
+        ServerAlias livline.local
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+        <Directory /var/www/liv_line_folder/public/>
+                Options Indexes FollowSymLinks
+                AllowOverride All
+                Require all granted
+        </Directory>
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+```
+- Then save by pressing ESC then type `:wq` and enter.
+- Then enable it by `sudo a2ensite livline.conf`
+
+- Then add livline.local to hosts file <br />
+  `sudo vi /etc/hosts`
+
+```
+    //Just add this line next below the last IPV4
+
+    127.0.0.1   livline.local
+    ::1 liveline.local
+```
+
+## Optional
+- If you just setup you environment make sure you <br/>
+  `sudo a2enmod rewrite`
+- Then, `sudo service apache2 restart` restart apache.
+
+- You could also add a default username with password on <br/>
+  `UserSeeder.php`
+
+Done!

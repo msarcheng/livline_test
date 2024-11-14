@@ -12,7 +12,7 @@ class Task extends Model
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
-    protected array $fillable = [
+    protected $fillable = [
         'title',
         'description'
     ];

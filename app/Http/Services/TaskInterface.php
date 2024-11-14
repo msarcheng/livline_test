@@ -8,5 +8,5 @@ interface TaskInterface
     public function show(int $task_id): array;
     public function store(array $tasks): array;
     public function update(array $tasks): array;
-    public function destroy(int $task_id): array;
+    public function destroy(int $task_id): bool|array;
 }

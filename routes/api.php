@@ -1,8 +1,13 @@
 <?php
 
+use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
+Route::controller(RegisterController::class)->group(function() {
+    Route::post('/login', 'login')->name('user.login');
+});
 
 Route::middleware('auth:sanctum')->group(function() {
 
@@ -17,8 +22,9 @@ Route::middleware('auth:sanctum')->group(function() {
         Route::put('/tasks/{id}', 'update')->name('update.task');
         Route::delete('/tasks/{id}', 'delete')->name('delete.task');
     });
-});
 
-Route::fallback(function () {
-    return "This is coding test.";
+
+    Route::fallback(function () {
+        return "This is coding test.";
+    });
 });
